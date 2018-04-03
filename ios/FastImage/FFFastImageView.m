@@ -78,44 +78,61 @@
         }
         hasCompleted = NO;
         hasErrored = NO;
+        if([_source.uri.absoluteString containsString:@"file://"]){
+            NSArray *tmp = [_source.uri.absoluteString componentsSeparatedByString:@"/"];
+            UIImage *image = [UIImage imageNamed:tmp[tmp.count -1]];
+            [self setImage:image];
+             hasCompleted = YES;
+            NSDictionary* params = @{
+                                     @"width":[NSNumber numberWithDouble:image.size.width],
+                                     @"height":[NSNumber numberWithDouble:image.size.height]
+                                     };
+            if (_onFastImageLoad) {
+                _onFastImageLoad(params);
+            }
+            if (_onFastImageLoadEnd) {
+                _onFastImageLoadEnd(@{});
+            }
+        }else{
         
-        // Load the new source.
-        [self sd_setImageWithURL:_source.uri
-                placeholderImage:nil
-                         options:options
-                        progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-                            if (_onFastImageProgress) {
-                                _onFastImageProgress(@{
-                                                       @"loaded": @(receivedSize),
-                                                       @"total": @(expectedSize)
-                                                       });
-                            }
-                        } completed:^(UIImage * _Nullable image,
-                                      NSError * _Nullable error,
-                                      SDImageCacheType cacheType,
-                                      NSURL * _Nullable imageURL) {
-                            if (error) {
-                                hasErrored = YES;
-                                if (_onFastImageError) {
-                                    _onFastImageError(@{});
+            // Load the new source.
+            [self sd_setImageWithURL:_source.uri
+                    placeholderImage:nil
+                             options:options
+                            progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+                                if (_onFastImageProgress) {
+                                    _onFastImageProgress(@{
+                                                           @"loaded": @(receivedSize),
+                                                           @"total": @(expectedSize)
+                                                           });
                                 }
-                                if (_onFastImageLoadEnd) {
-                                    _onFastImageLoadEnd(@{});
+                            } completed:^(UIImage * _Nullable image,
+                                          NSError * _Nullable error,
+                                          SDImageCacheType cacheType,
+                                          NSURL * _Nullable imageURL) {
+                                if (error) {
+                                    hasErrored = YES;
+                                    if (_onFastImageError) {
+                                        _onFastImageError(@{});
+                                    }
+                                    if (_onFastImageLoadEnd) {
+                                        _onFastImageLoadEnd(@{});
+                                    }
+                                } else {
+                                    hasCompleted = YES;
+                                    NSDictionary* params = @{
+                                                             @"width":[NSNumber numberWithDouble:image.size.width],
+                                                             @"height":[NSNumber numberWithDouble:image.size.height]
+                                                             };
+                                    if (_onFastImageLoad) {
+                                        _onFastImageLoad(params);
+                                    }
+                                    if (_onFastImageLoadEnd) {
+                                        _onFastImageLoadEnd(@{});
+                                    }
                                 }
-                            } else {
-                                hasCompleted = YES;
-                                NSDictionary* params = @{
-                                                         @"width":[NSNumber numberWithDouble:image.size.width],
-                                                         @"height":[NSNumber numberWithDouble:image.size.height]
-                                                         };
-                                if (_onFastImageLoad) {
-                                    _onFastImageLoad(params);
-                                }
-                                if (_onFastImageLoadEnd) {
-                                    _onFastImageLoadEnd(@{});
-                                }
-                            }
-                        }];
+                            }];
+        }
     }
 }
 
