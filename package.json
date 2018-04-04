@@ -22,7 +22,7 @@
     "android",
     "index.js",
     "index.d.ts",
-    "react-native-fast-image.podspec"
+    "FastImage.podspec"
   ],
   "main": "index.js",
   "directories": {
