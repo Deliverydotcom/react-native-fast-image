@@ -180,7 +180,24 @@
         self.hasCompleted = NO;
         self.hasErrored = NO;
         
-        [self downloadImage:_source options:options];
+        if([_source.uri.absoluteString containsString:@"file://"]){
+            NSArray *tmp = [_source.uri.absoluteString componentsSeparatedByString:@"/"];
+            UIImage *image = [UIImage imageNamed:tmp[tmp.count -1]];
+            [self setImage:image];
+             hasCompleted = YES;
+            NSDictionary* params = @{
+                                     @"width":[NSNumber numberWithDouble:image.size.width],
+                                     @"height":[NSNumber numberWithDouble:image.size.height]
+                                     };
+            if (_onFastImageLoad) {
+                _onFastImageLoad(params);
+            }
+            if (_onFastImageLoadEnd) {
+                _onFastImageLoadEnd(@{});
+            }
+        }else{
+            [self downloadImage:_source options:options];
+        }
     }
 }
 
