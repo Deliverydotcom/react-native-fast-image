@@ -180,11 +180,11 @@
         self.hasCompleted = NO;
         self.hasErrored = NO;
         
-        if([_source.uri.absoluteString containsString:@"file://"]){
-            NSArray *tmp = [_source.uri.absoluteString componentsSeparatedByString:@"/"];
+        if([_source.url.absoluteString containsString:@"file://"]){
+            NSArray *tmp = [_source.url.absoluteString componentsSeparatedByString:@"/"];
             UIImage *image = [UIImage imageNamed:tmp[tmp.count -1]];
             [self setImage:image];
-             hasCompleted = YES;
+            _hasCompleted = YES;
             NSDictionary* params = @{
                                      @"width":[NSNumber numberWithDouble:image.size.width],
                                      @"height":[NSNumber numberWithDouble:image.size.height]
