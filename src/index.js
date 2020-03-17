@@ -28,10 +28,10 @@ function FastImageBase({
 }) {
     const resolvedSource = Image.resolveAssetSource(source)
     const isExternalImage =
-        (resolvedSource &&
-            resolvedSource.uri &&
-            resolvedSource.uri.includes('http')) ||
-        resolvedSource.uri.includes('https')
+        resolvedSource &&
+        resolvedSource.uri &&
+        (resolvedSource.uri.includes('http') ||
+            resolvedSource.uri.includes('https'))
 
     if (Platform.OS === 'ios' && isExternalImage) {
         fallback = true
