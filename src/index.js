@@ -33,7 +33,7 @@ function FastImageBase({
         (resolvedSource.uri.includes('http') ||
             resolvedSource.uri.includes('https'))
 
-    if (Platform.OS === 'ios' && isExternalImage) {
+    if (Platform.OS === 'ios' && !isExternalImage) {
         fallback = true
     }
 
