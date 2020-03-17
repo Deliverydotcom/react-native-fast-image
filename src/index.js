@@ -7,6 +7,7 @@ import {
     requireNativeComponent,
     ViewPropTypes,
     StyleSheet,
+    Platform,
 } from 'react-native'
 
 const FastImageViewNativeModule = NativeModules.FastImageView
@@ -26,6 +27,15 @@ function FastImageBase({
     ...props
 }) {
     const resolvedSource = Image.resolveAssetSource(source)
+    const isExternalImage =
+        (resolvedSource &&
+            resolvedSource.uri &&
+            resolvedSource.uri.includes('http')) ||
+        resolvedSource.uri.includes('https')
+
+    if (Platform.OS === 'ios' && isExternalImage) {
+        fallback = true
+    }
 
     if (fallback) {
         return (
