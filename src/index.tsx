@@ -11,6 +11,7 @@ import {
     StyleProp,
     TransformsStyle,
     AccessibilityProps,
+    Platform,
 } from 'react-native'
 
 const FastImageViewNativeModule = NativeModules.FastImageView
@@ -144,10 +145,15 @@ function FastImageBase({
     forwardedRef,
     ...props
 }: FastImageProps & { forwardedRef: React.Ref<any> }) {
+    const resolvedSource = Image.resolveAssetSource(source as any)
+    const isExternalImage = resolvedSource && resolvedSource.uri && (resolvedSource.uri.includes('http') || resolvedSource.uri.includes('https'))
+    if (Platform.OS === 'ios' && isExternalImage) {
+        fallback = true
+    }
+
     if (fallback) {
         const cleanedSource = { ...(source as any) }
         delete cleanedSource.cache
-        const resolvedSource = Image.resolveAssetSource(cleanedSource)
 
         return (
             <View style={[styles.imageContainer, style]} ref={forwardedRef}>
@@ -166,9 +172,7 @@ function FastImageBase({
             </View>
         )
     }
-
-    const resolvedSource = Image.resolveAssetSource(source as any)
-
+    
     return (
         <View style={[styles.imageContainer, style]} ref={forwardedRef}>
             <FastImageView
